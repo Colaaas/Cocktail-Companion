@@ -60,6 +60,8 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    implementation("com.google.code.gson:gson:2.10.1")
+
 // Compose UI
     implementation(libs.androidx.activity.compose.v172)
     implementation(libs.ui)

@@ -1,3 +1,15 @@
 App mobile cocktail companion
 
-Partager sur github le repo : paul.cordon@fifteen.eu cordonp
+Mettre en place un système de photo pour les ingrédients
+
+
+
+
+
+J'ai fait un Figma de mon app
+
+Voici ce que mon application va contenir :
+- Petit header : zone qui est présente pour qu'il n'y ait pas de contenu dans la zone de l'appareil photo frontale du smartphone.
+- Footer : il est toujours présent peut importe la page qui est en exécution. Il contient un icon home, un icon loupe et un icon de 3 bouteilles que j'appelle icon Bar.
+- Home page : c'est la page qui est au lancement de l'application. Des cocktails sont présentés, la page Rechercher renvoi également sur cette page. Chaque cocktail a une image, un nom et des tags.
+- 

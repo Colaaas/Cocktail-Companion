@@ -31,3 +31,24 @@ data class Cocktail(
     val strMeasure9: String?,
     val strMeasure10: String?
 )
+
+fun Cocktail.getIngredients(): List<Pair<String?, String>> {
+    val ingredients = listOf(
+        strMeasure1 to strIngredient1,
+        strMeasure2 to strIngredient2,
+        strMeasure3 to strIngredient3,
+        strMeasure4 to strIngredient4,
+        strMeasure5 to strIngredient5,
+        strMeasure6 to strIngredient6,
+        strMeasure7 to strIngredient7,
+        strMeasure8 to strIngredient8,
+        strMeasure9 to strIngredient9,
+        strMeasure10 to strIngredient10
+    )
+
+    return ingredients.filterNot { it.second.isNullOrBlank() }.map {
+        val quantity = if (it.second?.lowercase()?.contains("glaçon") == true) "à volonté" else it.first?.trim()
+        quantity to it.second!!.trim()
+    }
+}
+
