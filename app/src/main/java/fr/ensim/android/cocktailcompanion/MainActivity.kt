@@ -1,73 +1,62 @@
 package fr.ensim.android.cocktailcompanion
 
+import CocktailCard
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import fr.ensim.android.cocktailcompanion.model.Cocktail
 import fr.ensim.android.cocktailcompanion.ui.components.*
 import fr.ensim.android.cocktailcompanion.ui.theme.CocktailCompanionTheme
+import fr.ensim.android.cocktailcompanion.viewmodel.CocktailViewModel
+
 
 class MainActivity : ComponentActivity() {
+
+    private val cocktailViewModel: CocktailViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        cocktailViewModel.loadPredefinedCocktails()
+
         setContent {
             CocktailCompanionTheme {
-                // Exemple mock de cocktails
-                val mockCocktail = Cocktail(
-                    idDrink = "1",
-                    strDrink = "Margarita",
-                    strDrinkThumb = "https://www.thecocktaildb.com/images/media/drink/5noda61589575158.jpg",
-                    strTags = "Tag1,Tag2",
-                    strInstructions = "Shake and serve.",
-                    strIngredient1 = "Tequila",
-                    strIngredient2 = "Triple sec",
-                    strIngredient3 = "Lime juice",
-                    strIngredient4 = null,
-                    strIngredient5 = null,
-                    strIngredient6 = null,
-                    strIngredient7 = null,
-                    strIngredient8 = null,
-                    strIngredient9 = null,
-                    strIngredient10 = null,
-                    strMeasure1 = "1 1/2 oz",
-                    strMeasure2 = "1/2 oz",
-                    strMeasure3 = "1 oz",
-                    strMeasure4 = null,
-                    strMeasure5 = null,
-                    strMeasure6 = null,
-                    strMeasure7 = null,
-                    strMeasure8 = null,
-                    strMeasure9 = null,
-                    strMeasure10 = null,
-                    strCategory = "Ordinary Drink",
-                    strIBA = "Contemporary Classics",
-                    strAlcoholic = "Alcoholic",
-                    strGlass = "Cocktail glass"
-                )
-                val cocktails = List(20) { mockCocktail.copy(idDrink = it.toString(), strDrink = "Cocktail $it") }
+                val cocktails by cocktailViewModel.cocktails.collectAsState()
 
-                Column(
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    AppTitle()
+                Column(modifier = Modifier.fillMaxSize()) {
 
-                    // Zone scrollable avec la grille
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxWidth()
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(2),
+                        modifier = Modifier.weight(1f),
+                        contentPadding = PaddingValues(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        CocktailGrid(cocktails = cocktails)
+                        // Header dans le lazy grid (pas scrollé séparément)
+                        item(span = { GridItemSpan(maxCurrentLineSpan) }) {
+                            AppTitle()
+                            Spacer(modifier = Modifier.height(12.dp))
+                        }
+
+                        // Les cocktails en grille 2 colonnes
+                        items(cocktails) { cocktail ->
+                            CocktailCard(cocktail = cocktail)
+                        }
                     }
 
                     Footer()
                 }
             }
         }
+
     }
 }
