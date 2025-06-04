@@ -3,56 +3,69 @@ package fr.ensim.android.cocktailcompanion
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.AsyncImage
-import fr.ensim.android.cocktailcompanion.ui.theme.CocktailCompanionTheme
-import fr.ensim.android.cocktailcompanion.viewmodel.CocktailViewModel
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.Alignment
-import fr.ensim.android.cocktailcompanion.model.getIngredients
+import fr.ensim.android.cocktailcompanion.model.Cocktail
+import fr.ensim.android.cocktailcompanion.ui.components.*
+import fr.ensim.android.cocktailcompanion.ui.theme.CocktailCompanionTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             CocktailCompanionTheme {
-                val vm: CocktailViewModel = viewModel()
-                val cocktail by vm.cocktail.collectAsState()
+                // Exemple mock de cocktails
+                val mockCocktail = Cocktail(
+                    idDrink = "1",
+                    strDrink = "Margarita",
+                    strDrinkThumb = "https://www.thecocktaildb.com/images/media/drink/5noda61589575158.jpg",
+                    strTags = "Tag1,Tag2",
+                    strInstructions = "Shake and serve.",
+                    strIngredient1 = "Tequila",
+                    strIngredient2 = "Triple sec",
+                    strIngredient3 = "Lime juice",
+                    strIngredient4 = null,
+                    strIngredient5 = null,
+                    strIngredient6 = null,
+                    strIngredient7 = null,
+                    strIngredient8 = null,
+                    strIngredient9 = null,
+                    strIngredient10 = null,
+                    strMeasure1 = "1 1/2 oz",
+                    strMeasure2 = "1/2 oz",
+                    strMeasure3 = "1 oz",
+                    strMeasure4 = null,
+                    strMeasure5 = null,
+                    strMeasure6 = null,
+                    strMeasure7 = null,
+                    strMeasure8 = null,
+                    strMeasure9 = null,
+                    strMeasure10 = null,
+                    strCategory = "Ordinary Drink",
+                    strIBA = "Contemporary Classics",
+                    strAlcoholic = "Alcoholic",
+                    strGlass = "Cocktail glass"
+                )
+                val cocktails = List(20) { mockCocktail.copy(idDrink = it.toString(), strDrink = "Cocktail $it") }
 
-                LaunchedEffect(Unit) {
-                    vm.fetchCocktail("Negroni")
-                }
+                Column(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    AppTitle()
 
-                Surface(modifier = Modifier.fillMaxSize()) {
-                    if (cocktail != null) {
-                        Column(
-                            modifier = Modifier.padding(16.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(text = cocktail!!.strDrink ?: "No name", style = MaterialTheme.typography.headlineMedium)
-                            Spacer(modifier = Modifier.height(8.dp))
-                            AsyncImage(
-                                model = cocktail!!.strDrinkThumb,
-                                contentDescription = null,
-                                modifier = Modifier.height(200.dp)
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text(text = cocktail!!.strInstructions ?: "")
-                            Text("Ingrédients :", style = MaterialTheme.typography.titleMedium)
-                            Spacer(modifier = Modifier.height(4.dp))
-                            cocktail!!.getIngredients().forEach { (quantity, name) ->
-                                Text(text = if (!quantity.isNullOrBlank()) "$quantity $name" else name)
-                            }
-                        }
-                    } else {
-                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            CircularProgressIndicator()
-                        }
+                    // Zone scrollable avec la grille
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
+                    ) {
+                        CocktailGrid(cocktails = cocktails)
                     }
+
+                    Footer()
                 }
             }
         }

@@ -10,6 +10,10 @@ data class Cocktail(
     val strDrinkThumb: String?,
     val strTags: String?,
     val strInstructions: String?,
+    val strCategory: String?,
+    val strIBA: String?,
+    val strAlcoholic: String?,
+    val strGlass: String?,
     val strIngredient1: String?,
     val strIngredient2: String?,
     val strIngredient3: String?,
@@ -45,10 +49,8 @@ fun Cocktail.getIngredients(): List<Pair<String?, String>> {
         strMeasure9 to strIngredient9,
         strMeasure10 to strIngredient10
     )
-
     return ingredients.filterNot { it.second.isNullOrBlank() }.map {
         val quantity = if (it.second?.lowercase()?.contains("glaçon") == true) "à volonté" else it.first?.trim()
         quantity to it.second!!.trim()
     }
 }
-

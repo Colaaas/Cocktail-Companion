@@ -9,13 +9,13 @@ import coil.compose.AsyncImage
 import fr.ensim.android.cocktailcompanion.model.Cocktail
 
 @Composable
-fun CocktailComponent(
+fun CocktailCard(
     cocktail: Cocktail,
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
-            .padding(16.dp)
+            .padding(2.dp)
             .fillMaxWidth()
     ) {
         AsyncImage(

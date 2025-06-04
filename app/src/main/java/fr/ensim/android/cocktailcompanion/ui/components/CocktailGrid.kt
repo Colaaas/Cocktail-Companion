@@ -1,2 +1,25 @@
 package fr.ensim.android.cocktailcompanion.ui.components
 
+import CocktailCard
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.*
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import fr.ensim.android.cocktailcompanion.model.Cocktail
+
+@Composable
+fun CocktailGrid(cocktails: List<Cocktail>) {
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        items(cocktails) { cocktail ->
+            CocktailCard(cocktail = cocktail)
+        }
+    }
+}
+

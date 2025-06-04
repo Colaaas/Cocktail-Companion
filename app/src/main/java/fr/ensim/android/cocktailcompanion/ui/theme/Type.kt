@@ -54,5 +54,4 @@ val Typography = Typography(
         fontWeight = FontWeight.Normal,
         fontSize = 12.sp
     )
-    // Tu peux ajouter d'autres styles si besoin
 )
