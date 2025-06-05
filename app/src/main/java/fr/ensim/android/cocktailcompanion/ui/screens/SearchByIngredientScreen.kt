@@ -27,19 +27,19 @@ fun SearchByIngredientScreen(
     var isLoading by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
 
-    Column(Modifier.fillMaxSize().padding(16.dp)) {
+    Column(Modifier.fillMaxSize().padding(8.dp)) {
         Text("Recherche par ingrédient", style = MaterialTheme.typography.headlineSmall)
         Spacer(Modifier.height(12.dp))
         OutlinedTextField(
             value = ingredient,
             onValueChange = { ingredient = it },
-            label = { Text("Ingrédient (ex: Vodka)") },
+            label = { Text("Ingrédient (ex: Rum)") },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             isError = ingredient.trim().contains(" "),
             supportingText = {
                 if (ingredient.trim().contains(" ")) {
-                    Text("Un seul ingrédient à la fois (ex: Vodka)")
+                    Text("Un seul ingrédient à la fois (ex: Rum)")
                 }
             },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),

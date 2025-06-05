@@ -57,7 +57,10 @@ fun Cocktail.getIngredients(): List<Pair<String?, String>> {
         strMeasure10 to strIngredient10
     )
     return ingredients.filterNot { it.second.isNullOrBlank() }.map {
-        val quantity = if (it.second?.lowercase()?.contains("glaçon") == true) "à volonté" else it.first?.trim()
+        val quantity = if (it.second?.lowercase()?.contains("glaçon") == true)
+            "à volonté"
+        else
+            it.first?.trim()?.convertOzToCl()
         quantity to it.second!!.trim()
     }
 
@@ -83,4 +86,50 @@ fun Cocktail.getIngredients(): List<Pair<String?, String>> {
         }
     }
 
+}
+
+fun String.convertOzToCl(): String {
+    // Gère les plages du type "2-3 oz"
+    val rangeRegex = Regex("""([\d\s/.,]+)-([\d\s/.,]+)\s*oz""", RegexOption.IGNORE_CASE)
+    val rangeMatch = rangeRegex.find(this)
+    if (rangeMatch != null) {
+        val start = parseFraction(rangeMatch.groupValues[1].trim())
+        val end = parseFraction(rangeMatch.groupValues[2].trim())
+        if (start != null && end != null) {
+            val clStart = start * 2.957
+            val clEnd = end * 2.957
+            return rangeRegex.replace(this) { "${"%.1f".format(clStart)}-${"%.1f".format(clEnd)} cL" }
+        }
+    }
+
+    // Gère les valeurs simples ou fractionnaires
+    val regex = Regex("""([\d\s/.,]+)\s*oz""", RegexOption.IGNORE_CASE)
+    val match = regex.find(this)
+    return if (match != null) {
+        val raw = match.groupValues[1].trim()
+        val ozValue = parseFraction(raw)
+        if (ozValue != null) {
+            val clValue = ozValue * 2.957
+            regex.replace(this) { "${"%.1f".format(clValue)} cL" }
+        } else this
+    } else this
+}
+
+// Fonction utilitaire pour parser les fractions du type "1 1/2"
+fun parseFraction(input: String): Double? {
+    return try {
+        val parts = input.split(' ')
+        var value = 0.0
+        for (part in parts) {
+            value += if (part.contains('/')) {
+                val nums = part.split('/')
+                if (nums.size == 2) nums[0].toDouble() / nums[1].toDouble() else 0.0
+            } else {
+                part.replace(',', '.').toDouble()
+            }
+        }
+        value
+    } catch (e: Exception) {
+        null
+    }
 }

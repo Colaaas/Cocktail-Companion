@@ -175,7 +175,7 @@ fun CameraCaptureScreen() {
             AlertDialog(
                 onDismissRequest = { showDeleteDialog = false },
                 title = { Text("Confirmation") },
-                text = { Text("Êtes-vous sûr de vouloir supprimer cette photo ?") },
+                text = { Text("Êtes-vous sûr de vouloir supprimer définitivement cette photo ?") },
                 confirmButton = {
                     TextButton(onClick = {
                         val toRemove = photoToDelete

@@ -33,7 +33,7 @@ fun SearchByNameScreen(
                 (cocktailName.isBlank() || cocktail.strDrink?.contains(cocktailName, ignoreCase = true) == true)
     }
 
-    Column(Modifier.fillMaxSize().padding(16.dp)) {
+    Column(Modifier.fillMaxSize().padding(8.dp)) {
         Text("Recherche par nom", style = MaterialTheme.typography.headlineSmall)
         Spacer(Modifier.height(1.dp))
         OutlinedTextField(
