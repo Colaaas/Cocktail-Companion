@@ -1,3 +1,4 @@
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.material3.*
@@ -11,12 +12,14 @@ import fr.ensim.android.cocktailcompanion.model.Cocktail
 @Composable
 fun CocktailCard(
     cocktail: Cocktail,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
 ) {
     Column(
         modifier = modifier
             .padding(2.dp)
             .fillMaxWidth()
+            .clickable { onClick() }
     ) {
         AsyncImage(
             model = cocktail.strDrinkThumb,

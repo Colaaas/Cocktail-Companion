@@ -50,6 +50,6 @@ fun AppTitle(
         textAlign = TextAlign.Center,
         modifier = modifier
             .fillMaxWidth()
-            .padding(16.dp)
+            .padding(3.dp)
     )
 }

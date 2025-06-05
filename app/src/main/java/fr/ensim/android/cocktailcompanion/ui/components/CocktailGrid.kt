@@ -11,17 +11,24 @@ import fr.ensim.android.cocktailcompanion.model.Cocktail
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
-fun CocktailGrid(cocktails: List<Cocktail>, modifier: Modifier = Modifier) {
+fun CocktailGrid(
+    cocktails: List<Cocktail>,
+    onCocktailClick: (Cocktail) -> Unit,
+    modifier: Modifier = Modifier
+) {
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
             contentPadding = PaddingValues(4.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            horizontalArrangement = Arrangement.spacedBy(2.dp),
             modifier = Modifier.fillMaxSize()
         ) {
             items(cocktails) { cocktail ->
-                CocktailCard(cocktail = cocktail)
+                CocktailCard(
+                    cocktail = cocktail,
+                    onClick = { onCocktailClick(cocktail) }
+                )
             }
         }
     }

@@ -10,6 +10,7 @@ data class Cocktail(
     val strDrinkThumb: String?,
     val strTags: String?,
     val strInstructions: String?,
+    val strInstructionsFR: String?,
     val strCategory: String?,
     val strIBA: String?,
     val strAlcoholic: String?,
@@ -36,6 +37,12 @@ data class Cocktail(
     val strMeasure10: String?
 )
 
+data class Ingredient(
+    val nom: String,
+    val quantite: String,
+    val imageUrl: String
+)
+
 fun Cocktail.getIngredients(): List<Pair<String?, String>> {
     val ingredients = listOf(
         strMeasure1 to strIngredient1,
@@ -53,4 +60,27 @@ fun Cocktail.getIngredients(): List<Pair<String?, String>> {
         val quantity = if (it.second?.lowercase()?.contains("glaçon") == true) "à volonté" else it.first?.trim()
         quantity to it.second!!.trim()
     }
+
+    fun Cocktail.toIngredientList(): List<Ingredient> {
+        val ingredients = listOf(
+            strMeasure1 to strIngredient1,
+            strMeasure2 to strIngredient2,
+            strMeasure3 to strIngredient3,
+            strMeasure4 to strIngredient4,
+            strMeasure5 to strIngredient5,
+            strMeasure6 to strIngredient6,
+            strMeasure7 to strIngredient7,
+            strMeasure8 to strIngredient8,
+            strMeasure9 to strIngredient9,
+            strMeasure10 to strIngredient10
+        )
+
+        return ingredients.filterNot { it.second.isNullOrBlank() }.map { (measure, name) ->
+            val nom = name!!.trim()
+            val quantite = if (nom.lowercase().contains("glaçon")) "à volonté" else measure?.trim().orEmpty()
+            val imageUrl = "https://www.thecocktaildb.com/images/ingredients/${nom.replace(" ", "%20")}-Small.png"
+            Ingredient(nom, quantite, imageUrl)
+        }
+    }
+
 }

@@ -66,6 +66,7 @@ dependencies {
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.retrofit2.converter.gson)
     implementation(libs.logging.interceptor)
+    implementation ("androidx.navigation:navigation-compose:2.9.0")
 
 // Compose UI
     implementation(libs.androidx.activity.compose.v172)

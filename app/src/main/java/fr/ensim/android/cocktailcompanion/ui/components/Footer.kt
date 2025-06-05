@@ -20,7 +20,7 @@ fun Footer(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(80.dp)
+            .height(60.dp)
             .background(MaterialTheme.colorScheme.surface),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically

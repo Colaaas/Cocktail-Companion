@@ -1,23 +1,19 @@
 package fr.ensim.android.cocktailcompanion
 
-import CocktailCard
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import fr.ensim.android.cocktailcompanion.ui.components.*
+import androidx.navigation.compose.rememberNavController
+import fr.ensim.android.cocktailcompanion.model.Cocktail
+import fr.ensim.android.cocktailcompanion.ui.components.Footer
+import fr.ensim.android.cocktailcompanion.ui.navigation.NavGraph
 import fr.ensim.android.cocktailcompanion.ui.theme.CocktailCompanionTheme
 import fr.ensim.android.cocktailcompanion.viewmodel.CocktailViewModel
-
 
 class MainActivity : ComponentActivity() {
 
@@ -31,32 +27,34 @@ class MainActivity : ComponentActivity() {
         setContent {
             CocktailCompanionTheme {
                 val cocktails by cocktailViewModel.cocktails.collectAsState()
+                val navController = rememberNavController()
 
-                Column(modifier = Modifier.fillMaxSize()) {
+                var selectedCocktail by remember { mutableStateOf<Cocktail?>(null) }
 
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(2),
-                        modifier = Modifier.weight(1f),
-                        contentPadding = PaddingValues(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                Column(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    // Contenu principal avec NavHost (affiche les écrans)
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
                     ) {
-                        // Header dans le lazy grid (pas scrollé séparément)
-                        item(span = { GridItemSpan(maxCurrentLineSpan) }) {
-                            AppTitle()
-                            Spacer(modifier = Modifier.height(12.dp))
-                        }
-
-                        // Les cocktails en grille 2 colonnes
-                        items(cocktails) { cocktail ->
-                            CocktailCard(cocktail = cocktail)
-                        }
+                        NavGraph(
+                            navController = navController,
+                            cocktails = cocktails,
+                            selectedCocktail = selectedCocktail,
+                            onCocktailSelected = { cocktail ->
+                                selectedCocktail = cocktail
+                                navController.navigate("detail")
+                            }
+                        )
                     }
 
-                    Footer()
+                    // Footer toujours visible en bas
+                    Footer(modifier = Modifier.fillMaxWidth().padding(8.dp))
                 }
             }
         }
-
     }
 }
