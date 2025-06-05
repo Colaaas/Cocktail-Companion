@@ -10,7 +10,7 @@ import fr.ensim.android.cocktailcompanion.ui.screens.CocktailDetailScreen
 
 sealed class Screen(val route: String) {
     object Home : Screen("home")
-    object Detail : Screen("detail")
+    object Detail : Screen("detail/{cocktailId}")
 }
 
 @Composable
@@ -25,13 +25,16 @@ fun NavGraph(
             CocktailGrid(
                 cocktails = cocktails,
                 onCocktailClick = { selectedCocktail ->
-                    onCocktailSelected(selectedCocktail)
-                    navController.navigate(Screen.Detail.route)
+                    navController.navigate(Screen.Detail.route + "/${selectedCocktail.idDrink}")
                 }
             )
         }
-        composable(Screen.Detail.route) {
-            selectedCocktail?.let { CocktailDetailScreen(it) }
+        composable(Screen.Detail.route + "/{cocktailId}") { backStackEntry ->
+            val cocktailId = backStackEntry.arguments?.getString("cocktailId")
+            val selected = cocktails.find { it.idDrink == cocktailId }
+            selected?.let {
+                CocktailDetailScreen(it, navController)
+            }
         }
     }
 }

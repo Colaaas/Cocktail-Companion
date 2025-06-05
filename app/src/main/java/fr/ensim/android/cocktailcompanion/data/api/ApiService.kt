@@ -1,5 +1,6 @@
 package fr.ensim.android.cocktailcompanion.data.api
 
+import CocktailApi
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 

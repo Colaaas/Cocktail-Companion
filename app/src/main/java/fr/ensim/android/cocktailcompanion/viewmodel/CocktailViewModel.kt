@@ -23,8 +23,7 @@ class CocktailViewModel : ViewModel() {
         "Boulevardier", "Gin Fizz", "Cuba Libre", "Tom Collins", "Paloma",
         "Dark 'n' Stormy", "Moscow Mule", "Sex on the Beach", "Malibu Sunrise",
         "Passion Fruit Martini", "Strawberry Daiquiri", "Watermelon Mojito",
-        "Long Island Iced Tea", "Amaretto Sour", "Gin Basil Smash", "Clover Club",
-        "Tiki Punch"
+        "Long Island Iced Tea", "Amaretto Sour", "Gin Basil Smash", "Clover Club"
     )
 
     fun loadPredefinedCocktails() {
@@ -41,4 +40,97 @@ class CocktailViewModel : ViewModel() {
             _cocktails.value = results
         }
     }
+
+    fun searchCocktails(query: String) {
+        viewModelScope.launch {
+            try {
+                if (query.isBlank()) {
+                    loadPredefinedCocktails()
+                } else {
+                    val response = ApiService.api.searchCocktail(query)
+                    _cocktails.value = response.drinks ?: emptyList()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                _cocktails.value = emptyList()
+            }
+        }
+    }
+
+    fun loadRandomCocktails(count: Int, onResult: (List<Cocktail>) -> Unit) {
+        viewModelScope.launch {
+            val results = mutableListOf<Cocktail>()
+            repeat(count) {
+                try {
+                    val response = ApiService.api.getRandomCocktail()
+                    response.drinks?.firstOrNull()?.let { results.add(it) }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+            onResult(results)
+        }
+    }
+
+    fun filterByAlcoholic(type: String, onResult: (List<Cocktail>) -> Unit) {
+        viewModelScope.launch {
+            try {
+                val response = ApiService.api.filterByAlcoholic(type)
+                val drinks = response.drinks?.mapNotNull {
+                    it.idDrink?.let { id -> ApiService.api.lookupCocktail(id).drinks?.firstOrNull() }
+                } ?: emptyList()
+                onResult(drinks)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                onResult(emptyList())
+            }
+        }
+    }
+
+    fun filterByCategory(category: String, onResult: (List<Cocktail>) -> Unit) {
+        viewModelScope.launch {
+            try {
+                val response = ApiService.api.filterByCategory(category)
+                val drinks = response.drinks?.mapNotNull {
+                    it.idDrink?.let { id -> ApiService.api.lookupCocktail(id).drinks?.firstOrNull() }
+                } ?: emptyList()
+                onResult(drinks)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                onResult(emptyList())
+            }
+        }
+    }
+
+    fun filterByGlass(glass: String, onResult: (List<Cocktail>) -> Unit) {
+        viewModelScope.launch {
+            try {
+                val response = ApiService.api.filterByGlass(glass)
+                val drinks = response.drinks?.mapNotNull {
+                    it.idDrink?.let { id -> ApiService.api.lookupCocktail(id).drinks?.firstOrNull() }
+                } ?: emptyList()
+                onResult(drinks)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                onResult(emptyList())
+            }
+        }
+    }
+
+    fun searchByIngredient(ingredient: String, onResult: (List<Cocktail>) -> Unit) {
+        viewModelScope.launch {
+            try {
+                val response = ApiService.api.filterByIngredient(ingredient)
+                val drinks = response.drinks?.mapNotNull {
+                    it.idDrink?.let { id -> ApiService.api.lookupCocktail(id).drinks?.firstOrNull() }
+                } ?: emptyList()
+                onResult(drinks)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                onResult(emptyList())
+            }
+        }
+    }
 }
+
+

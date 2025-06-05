@@ -45,12 +45,11 @@ fun CocktailCard(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
-            listOfNotNull(
-                cocktail.strCategory,
-                cocktail.strIBA,
-                cocktail.strAlcoholic,
-                cocktail.strGlass
-            ).forEach { tag ->
+            val tags = mutableListOf<String>()
+            cocktail.strCategory?.let { tags.add(it) }
+            tags.addAll(cocktail.strTags?.split(",")?.map { it.trim() } ?: emptyList())
+
+            tags.forEach { tag ->
                 Surface(
                     shape = MaterialTheme.shapes.small,
                     color = MaterialTheme.colorScheme.secondaryContainer
@@ -66,3 +65,4 @@ fun CocktailCard(
         }
     }
 }
+

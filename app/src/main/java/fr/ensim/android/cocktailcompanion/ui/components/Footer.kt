@@ -2,20 +2,22 @@ package fr.ensim.android.cocktailcompanion.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.LocalBar
+import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
-
 @Composable
 fun Footer(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onHomeClick: () -> Unit,
+    onSearchClick: () -> Unit,
+    onBarClick: () -> Unit = {} // optionnel, si tu veux l'utiliser plus tard
 ) {
     Row(
         modifier = modifier
@@ -25,7 +27,7 @@ fun Footer(
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        IconButton(onClick = { /* TODO: navigate home */ }) {
+        IconButton(onClick = onHomeClick) {
             Icon(
                 imageVector = Icons.Outlined.Home,
                 contentDescription = "Accueil",
@@ -33,7 +35,7 @@ fun Footer(
             )
         }
 
-        IconButton(onClick = { /* TODO: search action */ }) {
+        IconButton(onClick = onSearchClick) {
             Icon(
                 imageVector = Icons.Outlined.Search,
                 contentDescription = "Rechercher",
@@ -41,13 +43,12 @@ fun Footer(
             )
         }
 
-        IconButton(onClick = { /* TODO: open bar */ }) {
+        IconButton(onClick = onBarClick) {
             Icon(
                 imageVector = Icons.Outlined.LocalBar,
                 contentDescription = "Icône de bar",
                 tint = MaterialTheme.colorScheme.primary
             )
-
         }
     }
 }
