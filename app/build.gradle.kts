@@ -67,6 +67,8 @@ dependencies {
     implementation(libs.retrofit2.converter.gson)
     implementation(libs.logging.interceptor)
     implementation (libs.androidx.navigation.compose)
+    implementation (libs.androidx.datastore.preferences)
+    implementation (libs.androidx.datastore.preferences.v100)
 
 // Compose UI
     implementation(libs.androidx.activity.compose.v172)
