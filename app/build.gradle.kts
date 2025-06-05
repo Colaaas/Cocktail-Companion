@@ -60,6 +60,16 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    implementation(libs.gson)
+    implementation(libs.androidx.foundation)
+    implementation(libs.accompanist.flowlayout)
+    implementation(libs.androidx.material.icons.extended)
+    implementation(libs.retrofit2.converter.gson)
+    implementation(libs.logging.interceptor)
+    implementation (libs.androidx.navigation.compose)
+    implementation (libs.androidx.datastore.preferences)
+    implementation (libs.androidx.datastore.preferences.v100)
+
 // Compose UI
     implementation(libs.androidx.activity.compose.v172)
     implementation(libs.ui)

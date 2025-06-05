@@ -3,50 +3,63 @@ package fr.ensim.android.cocktailcompanion
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.AsyncImage
-import fr.ensim.android.cocktailcompanion.ui.theme.CocktailAppTheme
-import fr.ensim.android.cocktailcompanion.viewmodel.CocktailViewModel
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.Alignment
+import androidx.navigation.compose.rememberNavController
+import fr.ensim.android.cocktailcompanion.model.Cocktail
+import fr.ensim.android.cocktailcompanion.ui.components.Footer
+import fr.ensim.android.cocktailcompanion.ui.navigation.NavGraph
+import fr.ensim.android.cocktailcompanion.ui.navigation.Screen
+import fr.ensim.android.cocktailcompanion.ui.theme.CocktailCompanionTheme
+import fr.ensim.android.cocktailcompanion.viewmodel.CocktailViewModel
 
 class MainActivity : ComponentActivity() {
+
+    private val cocktailViewModel: CocktailViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        cocktailViewModel.loadPredefinedCocktails()
+
         setContent {
-            CocktailAppTheme {
-                val vm: CocktailViewModel = viewModel()
-                val cocktail by vm.cocktail.collectAsState()
+            CocktailCompanionTheme {
+                val cocktails by cocktailViewModel.cocktails.collectAsState()
+                val navController = rememberNavController()
+                var selectedCocktail by remember { mutableStateOf<Cocktail?>(null) }
 
-                LaunchedEffect(Unit) {
-                    vm.fetchCocktail("Negroni")
-                }
-
-                Surface(modifier = Modifier.fillMaxSize()) {
-                    if (cocktail != null) {
-                        Column(
-                            modifier = Modifier.padding(16.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(text = cocktail!!.strDrink ?: "No name", style = MaterialTheme.typography.headlineMedium)
-                            Spacer(modifier = Modifier.height(8.dp))
-                            AsyncImage(
-                                model = cocktail!!.strDrinkThumb,
-                                contentDescription = null,
-                                modifier = Modifier.height(200.dp)
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text(text = cocktail!!.strInstructions ?: "")
-                        }
-                    } else {
-                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            CircularProgressIndicator()
-                        }
+                Column(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    // Contenu principal
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
+                    ) {
+                        NavGraph(
+                            navController = navController,
+                            cocktails = cocktails,
+                            selectedCocktail = selectedCocktail,
+                            onCocktailSelected = { cocktail ->
+                                selectedCocktail = cocktail
+                                navController.navigate(Screen.Detail.route.replace("{cocktailId}",
+                                    cocktail.idDrink.toString()
+                                ))
+                            },
+                            viewModel = cocktailViewModel
+                        )
                     }
+
+                    // Footer avec navigation
+                    Footer(
+                        onHomeClick = { navController.navigate(Screen.Home.route) },
+                        onSearchClick = { navController.navigate(Screen.SearchHome.route) },
+                        onPictureClick = { navController.navigate(Screen.Camera.route) }
+                    )
                 }
             }
         }
