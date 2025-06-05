@@ -4,7 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.LocalBar
+import androidx.compose.material.icons.outlined.PhotoLibrary
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -17,12 +17,12 @@ fun Footer(
     modifier: Modifier = Modifier,
     onHomeClick: () -> Unit,
     onSearchClick: () -> Unit,
-    onBarClick: () -> Unit = {} // optionnel, si tu veux l'utiliser plus tard
+    onPictureClick: () -> Unit = {}
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(60.dp)
+            .height(35.dp)
             .background(MaterialTheme.colorScheme.surface),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
@@ -43,10 +43,10 @@ fun Footer(
             )
         }
 
-        IconButton(onClick = onBarClick) {
+        IconButton(onClick = onPictureClick) {
             Icon(
-                imageVector = Icons.Outlined.LocalBar,
-                contentDescription = "Icône de bar",
+                imageVector = Icons.Outlined.PhotoLibrary,
+                contentDescription = "Photo",
                 tint = MaterialTheme.colorScheme.primary
             )
         }

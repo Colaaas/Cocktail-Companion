@@ -21,6 +21,7 @@ fun SearchByIngredientScreen(
     viewModel: CocktailViewModel,
     onCocktailSelected: (Cocktail) -> Unit
 ) {
+
     var ingredient by remember { mutableStateOf("") }
     var searchResults by remember { mutableStateOf<List<Cocktail>>(emptyList()) }
     var isLoading by remember { mutableStateOf(false) }
@@ -35,10 +36,20 @@ fun SearchByIngredientScreen(
             label = { Text("Ingrédient (ex: Vodka)") },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
+            isError = ingredient.trim().contains(" "),
+            supportingText = {
+                if (ingredient.trim().contains(" ")) {
+                    Text("Un seul ingrédient à la fois (ex: Vodka)")
+                }
+            },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
             keyboardActions = KeyboardActions(
                 onSearch = {
                     isLoading = true
+                    if (ingredient.trim().contains(" ")) {
+                        // Ne lance pas la recherche, ou affiche un message d'erreur
+                        return@KeyboardActions
+                    }
                     viewModel.searchByIngredient(ingredient) { results ->
                         searchResults = results
                         isLoading = false
@@ -49,6 +60,10 @@ fun SearchByIngredientScreen(
             trailingIcon = {
                 IconButton(onClick = {
                     isLoading = true
+                    if (ingredient.trim().contains(" ")) {
+                        // Ne lance pas la recherche, ou affiche un message d'erreur
+                        return@IconButton
+                    }
                     viewModel.searchByIngredient(ingredient) { results ->
                         searchResults = results
                         isLoading = false

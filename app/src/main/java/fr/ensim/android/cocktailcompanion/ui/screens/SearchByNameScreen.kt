@@ -21,31 +21,21 @@ fun SearchByNameScreen(
     viewModel: CocktailViewModel,
     onCocktailSelected: (Cocktail) -> Unit
 ) {
-    val cocktailCategories: List<String> = listOf(
-        "Cocktail", "Ordinary Drink", "Punch / Party Drink", "Shake", "Other / Unknown", "Cocoa",
-        "Shot", "Coffee / Tea", "Homemade Liqueur", "Beer", "Soft Drink"
-    )
-    val cocktailGlasses = listOf(
-        "Highball glass", "Old-fashioned glass", "Cocktail glass", "Copper Mug", "Whiskey Glass",
-        "Collins glass", "Pousse cafe glass", "Champagne flute", "Whiskey sour glass", "Brandy snifter",
-        "White wine glass", "Nick and Nora Glass", "Hurricane glass", "Coffee mug", "Shot glass", "Jar",
-        "Irish coffee cup", "Punch bowl", "Pitcher", "Pint glass", "Cordial glass", "Beer mug",
-        "Margarita/Coupette glass", "Beer pilsner", "Beer Glass", "Parfait glass", "Wine Glass",
-        "Mason jar", "Margarita glass", "Martini Glass", "Balloon Glass", "Coupe Glass"
-    )
     val cocktails by viewModel.cocktails.collectAsState()
-    var searchResults by remember { mutableStateOf<List<Cocktail>>(emptyList()) }
     var cocktailName by remember { mutableStateOf("") }
-    val focusManager = LocalFocusManager.current
-    var expandedCategory by remember { mutableStateOf(false) }
-    var selectedCategory by remember { mutableStateOf<String?>(null) }
-    var expandedGlass by remember { mutableStateOf(false) }
-    var selectedGlass by remember { mutableStateOf<String?>(null) }
+    var isNonAlcoholic by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(false) }
+    val focusManager = LocalFocusManager.current
+
+    // Filtrage combiné
+    val filteredCocktails = cocktails.filter { cocktail ->
+        (!isNonAlcoholic || cocktail.strAlcoholic?.contains("Non", ignoreCase = true) == true) &&
+                (cocktailName.isBlank() || cocktail.strDrink?.contains(cocktailName, ignoreCase = true) == true)
+    }
 
     Column(Modifier.fillMaxSize().padding(16.dp)) {
         Text("Recherche par nom", style = MaterialTheme.typography.headlineSmall)
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(1.dp))
         OutlinedTextField(
             value = cocktailName,
             onValueChange = { cocktailName = it },
@@ -72,96 +62,23 @@ fun SearchByNameScreen(
                 }
             }
         )
-        Spacer(Modifier.height(16.dp))
-        // Filtres regroupés
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+        Spacer(Modifier.height(1.dp))
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(2.dp),
+            modifier = Modifier.padding(vertical = 2.dp)
         ) {
-            Column(Modifier.padding(12.dp)) {
-                // Filtre alcool
-                Text("Par alcool")
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Button(onClick = {
-                        viewModel.filterByAlcoholic("Alcoholic") { searchResults = it }
-                    }) { Text("Avec alcool") }
-                    Button(onClick = {
-                        viewModel.filterByAlcoholic("Non_Alcoholic") { searchResults = it }
-                    }) { Text("Sans alcool") }
-                }
-                Spacer(Modifier.height(12.dp))
-                // Filtre catégorie
-                Text("Par catégorie")
-                Box {
-                    Button(onClick = { expandedCategory = true }) {
-                        Text(selectedCategory ?: "Choisir une catégorie")
-                    }
-                    DropdownMenu(
-                        expanded = expandedCategory,
-                        onDismissRequest = { expandedCategory = false }
-                    ) {
-                        DropdownMenuItem(
-                            text = { Text("Aucun") },
-                            onClick = {
-                                expandedCategory = false
-                                selectedCategory = null
-                                viewModel.loadPredefinedCocktails()
-                                searchResults = emptyList()
-                            }
-                        )
-                        cocktailCategories.forEach { category ->
-                            DropdownMenuItem(
-                                text = { Text(category) },
-                                onClick = {
-                                    expandedCategory = false
-                                    selectedCategory = category
-                                    viewModel.filterByCategory(category) { searchResults = it }
-                                }
-                            )
-                        }
-                    }
-                }
-                Spacer(Modifier.height(12.dp))
-                // Filtre verre
-                Text("Par type de verre")
-                Box {
-                    Button(onClick = { expandedGlass = true }) {
-                        Text(selectedGlass ?: "Choisir un verre")
-                    }
-                    DropdownMenu(
-                        expanded = expandedGlass,
-                        onDismissRequest = { expandedGlass = false }
-                    ) {
-                        DropdownMenuItem(
-                            text = { Text("Aucun") },
-                            onClick = {
-                                expandedGlass = false
-                                selectedGlass = null
-                                viewModel.loadPredefinedCocktails()
-                                searchResults = emptyList()
-                            }
-                        )
-                        cocktailGlasses.forEach { glass ->
-                            DropdownMenuItem(
-                                text = { Text(glass) },
-                                onClick = {
-                                    expandedGlass = false
-                                    selectedGlass = glass
-                                    viewModel.filterByGlass(glass) { searchResults = it }
-                                }
-                            )
-                        }
-                    }
-                }
-            }
+            Text("Sans alcool")
+            Switch(
+                checked = isNonAlcoholic,
+                onCheckedChange = { checked -> isNonAlcoholic = checked }
+            )
         }
-        Spacer(Modifier.height(24.dp))
+        Spacer(Modifier.height(1.dp))
         if (isLoading) {
             CircularProgressIndicator(Modifier.align(Alignment.CenterHorizontally))
-        } else if (cocktailName.isNotBlank() && cocktails.isNotEmpty()) {
-            CocktailGrid(cocktails = cocktails, onCocktailClick = onCocktailSelected)
-        } else if (searchResults.isNotEmpty()) {
-            CocktailGrid(cocktails = searchResults, onCocktailClick = onCocktailSelected)
+        } else if (filteredCocktails.isNotEmpty()) {
+            CocktailGrid(cocktails = filteredCocktails, onCocktailClick = onCocktailSelected)
         } else {
             Text("Aucun résultat affiché pour le moment.", style = MaterialTheme.typography.bodyMedium)
         }

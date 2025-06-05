@@ -6,6 +6,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import fr.ensim.android.cocktailcompanion.model.Cocktail
 import fr.ensim.android.cocktailcompanion.viewmodel.CocktailViewModel
 import fr.ensim.android.cocktailcompanion.ui.components.CocktailGrid
@@ -13,26 +14,24 @@ import fr.ensim.android.cocktailcompanion.ui.components.CocktailGrid
 @Composable
 fun DiscoverRandomScreen(
     viewModel: CocktailViewModel,
-    onCocktailSelected: (Cocktail) -> Unit
+    navController: NavController // Ajouté pour le bouton retour
 ) {
-    var cocktails by remember { mutableStateOf<List<Cocktail>>(emptyList()) }
+    var cocktail by remember { mutableStateOf<Cocktail?>(null) }
     var isLoading by remember { mutableStateOf(true) }
 
     LaunchedEffect(Unit) {
         isLoading = true
-        viewModel.loadRandomCocktails(6) {
-            cocktails = it
+        viewModel.loadRandomCocktails(1) { cocktails ->
+            cocktail = cocktails.firstOrNull()
             isLoading = false
         }
     }
 
-    Column(Modifier.fillMaxSize().padding(16.dp)) {
-        Text("6 cocktails au hasard", style = MaterialTheme.typography.headlineSmall)
-        Spacer(Modifier.height(16.dp))
-        if (isLoading) {
-            CircularProgressIndicator(Modifier.align(Alignment.CenterHorizontally))
-        } else {
-            CocktailGrid(cocktails = cocktails, onCocktailClick = onCocktailSelected)
-        }
+    if (isLoading) {
+        CircularProgressIndicator(Modifier)
+    } else {
+        cocktail?.let {
+            CocktailDetailScreen(cocktail = it, navController = navController)
+        } ?: Text("Aucun cocktail trouvé")
     }
 }

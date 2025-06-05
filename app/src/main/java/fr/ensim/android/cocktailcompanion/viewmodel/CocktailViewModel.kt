@@ -41,6 +41,10 @@ class CocktailViewModel : ViewModel() {
         }
     }
 
+    fun getCocktailById(id: String): Cocktail? {
+        return cocktails.value.firstOrNull { it.idDrink == id }
+    }
+
     fun searchCocktails(query: String) {
         viewModelScope.launch {
             try {
@@ -131,6 +135,16 @@ class CocktailViewModel : ViewModel() {
             }
         }
     }
+
+    suspend fun fetchCocktailById(id: String): Cocktail? {
+    return try {
+        val response = ApiService.api.lookupCocktail(id)
+        response.drinks?.firstOrNull()
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
+}
 }
 
 

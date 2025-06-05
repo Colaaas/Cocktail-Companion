@@ -22,11 +22,11 @@ fun SearchHomeScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Button(onClick = onSearchByName, modifier = Modifier.fillMaxWidth()) {
-            Text("Rechercher Cocktail")
+            Text("Rechercher un cocktail")
         }
         Spacer(Modifier.height(16.dp))
         Button(onClick = onDiscoverRandom, modifier = Modifier.fillMaxWidth()) {
-            Text("Découvrir 6 cocktails au hasard")
+            Text("Découvrir un cocktails au hasard")
         }
         Spacer(Modifier.height(16.dp))
         Button(onClick = onSearchByIngredient, modifier = Modifier.fillMaxWidth()) {

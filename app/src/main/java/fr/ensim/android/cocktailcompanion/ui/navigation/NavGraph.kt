@@ -1,6 +1,8 @@
 package fr.ensim.android.cocktailcompanion.ui.navigation
 
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
+import androidx.compose.runtime.*
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -16,6 +18,7 @@ sealed class Screen(val route: String) {
     object SearchByName : Screen("searchByName")
     object SearchByIngredient : Screen("searchByIngredient")
     object DiscoverRandom : Screen("discoverRandom")
+    object Camera : Screen("camera")
 }
 
 @Composable
@@ -37,11 +40,21 @@ fun NavGraph(
                 }
             )
         }
-        composable(Screen.Detail.route) { backStackEntry ->
+        composable("detail/{cocktailId}") { backStackEntry ->
             val cocktailId = backStackEntry.arguments?.getString("cocktailId")
-            val selected = cocktails.find { it.idDrink == cocktailId }
-            selected?.let {
-                CocktailDetailScreen(it, navController)
+            var cocktail by remember { mutableStateOf<Cocktail?>(null) }
+            var isLoading by remember { mutableStateOf(true) }
+
+            LaunchedEffect(cocktailId) {
+                isLoading = true
+                cocktail = cocktailId?.let { viewModel.fetchCocktailById(it) }
+                isLoading = false
+            }
+
+            when {
+                isLoading -> CircularProgressIndicator()
+                cocktail != null -> CocktailDetailScreen(cocktail = cocktail!!, navController = navController)
+                else -> Text("Cocktail introuvable")
             }
         }
         composable(Screen.SearchHome.route) {
@@ -74,12 +87,11 @@ fun NavGraph(
         composable(Screen.DiscoverRandom.route) {
             DiscoverRandomScreen(
                 viewModel = viewModel,
-                onCocktailSelected = { cocktail ->
-                    navController.navigate(Screen.Detail.route.replace("{cocktailId}",
-                        cocktail.idDrink.toString()
-                    ))
-                }
+                navController = navController
             )
+        }
+        composable(Screen.Camera.route) {
+            CameraCaptureScreen()
         }
     }
 }

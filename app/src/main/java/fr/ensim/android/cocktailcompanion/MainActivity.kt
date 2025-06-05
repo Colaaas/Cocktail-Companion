@@ -57,7 +57,8 @@ class MainActivity : ComponentActivity() {
                     // Footer avec navigation
                     Footer(
                         onHomeClick = { navController.navigate(Screen.Home.route) },
-                        onSearchClick = { navController.navigate(Screen.SearchHome.route) }
+                        onSearchClick = { navController.navigate(Screen.SearchHome.route) },
+                        onPictureClick = { navController.navigate(Screen.Camera.route) }
                     )
                 }
             }
